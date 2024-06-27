@@ -45,9 +45,24 @@ export class Helpers {
 
   
 
-  async getMatchResults() {
+  async getMatchResultsForFutureMatch() {
     const results = new Results();
     const date = await this.getNextDate();
+    const todaysDate = await this.getCurrentDate();
+    await this.pickDate(date);
+    const retrievedResults = await results.getResults(date, todaysDate);
+    const homeTeam = retrievedResults.home.fullName;
+    const awayTeam = retrievedResults.away.fullName;
+    const url = retrievedResults.onwardJourneyLink;
+    const gameId = retrievedResults.tipoTopicId
+    const eventId = retrievedResults.id
+    return [homeTeam, awayTeam, url, gameId, eventId]
+
+  }
+
+  async getMatchResultsForCompletedMatch() {
+    const results = new Results();
+    const date = await this.getPreviousDate()
     const todaysDate = await this.getCurrentDate();
     await this.pickDate(date);
     const retrievedResults = await results.getResults(date, todaysDate);
@@ -66,8 +81,11 @@ export class Helpers {
     const matchDate = retrievedLiveResults.sportDataEvent.date
     const time = retrievedLiveResults.sportDataEvent.time.displayTimeUK
     const venue = retrievedLiveResults.sportDataEvent.venue.name
+    const homeTeamScore = retrievedLiveResults.sportDataEvent.home.score
+    const awayTeamScore = retrievedLiveResults.sportDataEvent.away.score
+    const fullTime = retrievedLiveResults.sportDataEvent.periodLabel.value
 
-    return [matchDate, time, venue]
+    return [matchDate, time, venue, homeTeamScore, awayTeamScore, fullTime]
     
   }
 
