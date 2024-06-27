@@ -1,45 +1,81 @@
-import { Locator, Page } from "@playwright/test"
+import { Page } from "@playwright/test";
+import { Results } from "./results";
+import { Live_Results } from "./live_results";
 
 export class Helpers {
-  private readonly page: Page
-  private readonly datePicker: Locator
+  private readonly page: Page;
 
   constructor(page: Page) {
-    this.page = page
-    
-    
+    this.page = page;
   }
 
   async goto() {
     await this.page.goto(
       "https://www.bbc.co.uk/sport/football/scores-fixtures"
-    )
+    );
   }
 
   async getCurrentDate() {
-    let currentDate = new Date().toJSON().slice(0,10)
-    return currentDate
+    let currentDate = new Date().toJSON().slice(0, 10);
+    return currentDate;
   }
 
   async getPreviousDate() {
-    const todaysDate = new Date()
-    const previousDateInMS = todaysDate.setDate(todaysDate.getDate() - 1)
-    const previousDate = new Date(previousDateInMS).toJSON().slice(0, 10)
-    return previousDate
+    const todaysDate = new Date();
+    const previousDateInMS = todaysDate.setDate(todaysDate.getDate() - 1);
+    const previousDate = new Date(previousDateInMS).toJSON().slice(0, 10);
+    return previousDate;
   }
 
   async getNextDate() {
-    const todaysDate = new Date()
-    const nextDateInMS = todaysDate.setDate(todaysDate.getDate() + 1)
-    const nextDate = new Date(nextDateInMS).toJSON().slice(0, 10)
-    return nextDate
+    const todaysDate = new Date();
+    const nextDateInMS = todaysDate.setDate(todaysDate.getDate() + 1);
+    const nextDate = new Date(nextDateInMS).toJSON().slice(0, 10);
+    return nextDate;
   }
 
   async pickDate(date) {
-    this.page.getByTestId('datepicker')
-        .getByTestId('datepicker-dates')
-        .getByRole('list')
-        .getByTestId(`datepicker-date-link-${date}`)
-        .click()
+    this.page
+      .getByTestId("datepicker")
+      .getByTestId("datepicker-dates")
+      .getByRole("list")
+      .getByTestId(`datepicker-date-link-${date}`)
+      .click();
+  }
+
+  
+
+  async getMatchResults() {
+    const results = new Results();
+    const date = await this.getNextDate();
+    const todaysDate = await this.getCurrentDate();
+    await this.pickDate(date);
+    const retrievedResults = await results.getResults(date, todaysDate);
+    const homeTeam = retrievedResults.home.fullName;
+    const awayTeam = retrievedResults.away.fullName;
+    const url = retrievedResults.onwardJourneyLink;
+    const gameId = retrievedResults.tipoTopicId
+    const eventId = retrievedResults.id
+    return [homeTeam, awayTeam, url, gameId, eventId]
+
+  }
+
+  async getMatchLiveResults(gameId, eventId) {
+    const live_results = new Live_Results
+    const retrievedLiveResults = await live_results.getLiveResults(gameId, eventId)
+    const matchDate = retrievedLiveResults.sportDataEvent.date
+    const time = retrievedLiveResults.sportDataEvent.time.displayTimeUK
+    const venue = retrievedLiveResults.sportDataEvent.venue.name
+
+    return [matchDate, time, venue]
+    
+  }
+
+  async pickMatch(url) {
+    this.page
+      .getByTestId("fixtures-page-wrapper")
+      .getByRole('list')
+      .locator(`a[href="${url}"]`)
+      .click();
   }
 }
