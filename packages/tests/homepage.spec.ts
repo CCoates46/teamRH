@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test"
-import { Helpers } from "./utils/helpers"
+import { Helpers } from '../utils/helpers'
 
 test.describe("when user navigates to scores-fixtures page of BBC Sports", () => {
   let helpers: Helpers

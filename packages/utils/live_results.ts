@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test"
 
 export class Live_Results {
-    async getLiveResults (gameId, eventId) {
+    async getLiveResults (gameId: string, eventId: string) {
         const fixtureApiUrl = new URL('https://web-cdn.api.bbci.co.uk/wc-poll-data/container/live-header')
         fixtureApiUrl.searchParams.set('assetId', gameId)
         fixtureApiUrl.searchParams.set('globalContainerPoliing', 'true')

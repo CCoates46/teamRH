@@ -1,22 +1,15 @@
-import { test, expect } from "@playwright/test";
-import { Helpers } from "./utils/helpers";
+import { test, expect } from '../fixtures/baseTest';
 
 test.describe("when user selects dates using the date picker", () => {
-  let helpers: Helpers;
-
-  test.beforeEach(async ({ page }) => {
-    helpers = new Helpers(page);
-    await helpers.goto();
-  });
 
   test("should display fixtures and results for current day", async ({
-    page,
+    helpers, page,
   }) => {
     const todaysDate = await helpers.getCurrentDate();
 
     await helpers.pickDate(todaysDate);
 
-    const [homeTeam, awayTeam, url, gameId, eventId] =
+    const [homeTeam, awayTeam, , gameId, eventId] =
       await helpers.getMatchResultsForCurrentDay();
     const [matchDate, time, venue, homeTeamScore, awayTeamScore] =
       await helpers.getMatchLiveResults(gameId, eventId);
@@ -38,10 +31,9 @@ test.describe("when user selects dates using the date picker", () => {
     await expect(homeScore).toContainText(`${homeTeamScore}`);
     await expect(awayScore).toContainText(`${awayTeamScore}`);
   });
-  
 
   test("should display fixtures and results when previous day is selected", async ({
-    page,
+    helpers, page,
   }) => {
     const previousDate = await helpers.getPreviousDate();
     await helpers.pickDate(previousDate);
@@ -58,13 +50,12 @@ test.describe("when user selects dates using the date picker", () => {
   });
 
   test("should display fixtures and results when next day is selected", async ({
-    page,
+    helpers, page,
   }) => {
     const nextDate = await helpers.getNextDate();
     await helpers.pickDate(nextDate);
 
-    const [homeTeam, awayTeam] =
-      await helpers.getMatchResultsForFutureMatch();
+    const [homeTeam, awayTeam] = await helpers.getMatchResultsForFutureMatch();
     const teamLocator = page.getByTestId("fixtures-page-wrapper");
 
     await expect(page).toHaveURL(

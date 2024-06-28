@@ -34,7 +34,7 @@ export class Helpers {
     return nextDate;
   }
 
-  async pickDate(date) {
+  async pickDate(date: string) {
     this.page
       .getByTestId("datepicker")
       .getByTestId("datepicker-dates")
@@ -86,7 +86,7 @@ export class Helpers {
     return [homeTeam, awayTeam, url, gameId, eventId]
   }
 
-  async getMatchLiveResults(gameId, eventId) {
+  async getMatchLiveResults(gameId: string, eventId: string) {
     const live_results = new Live_Results
     const retrievedLiveResults = await live_results.getLiveResults(gameId, eventId)
     const matchDate = retrievedLiveResults.sportDataEvent.date
@@ -100,7 +100,7 @@ export class Helpers {
     
   }
 
-  async pickMatch(url) {
+  async pickMatch(url: string) {
     this.page
       .getByTestId("fixtures-page-wrapper")
       .getByRole('list')

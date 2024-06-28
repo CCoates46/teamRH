@@ -1,16 +1,9 @@
-import { test, expect } from "@playwright/test";
-import { Helpers } from "./utils/helpers";
+import { test, expect } from "../fixtures/baseTest";
 
 test.describe("when user selects an upcoming fixture and selects a team", () => {
-  let helpers: Helpers;
-
-  test.beforeEach(async ({ page }) => {
-    helpers = new Helpers(page);
-    await helpers.goto();
-  });
 
   test("should display correct team names, date, time and venue on live results page", async ({
-    page,
+    helpers, page,
   }) => {
     const [homeTeam, awayTeam, url, gameId, eventId] =
       await helpers.getMatchResultsForFutureMatch();
@@ -39,36 +32,34 @@ test.describe("when user selects an upcoming fixture and selects a team", () => 
 });
 
 test.describe("when user selects a completed fixture and selects a team", () => {
-  let helpers: Helpers;
+  // let helpers: Helpers;
 
-  test.beforeEach(async ({ page }) => {
-    helpers = new Helpers(page);
-    await helpers.goto();
-  });
+  // test.beforeEach(async ({ page }) => {
+  //   helpers = new Helpers(page);
+  //   await helpers.goto();
+  // });
 
   test("should display correct score, team names, date, time and venue on live results page", async ({
-    page,
+    helpers, page,
   }) => {
     const [homeTeam, awayTeam, url, gameId, eventId] =
       await helpers.getMatchResultsForCompletedMatch();
-    const [matchDate, time, venue, homeTeamScore, awayTeamScore] = await helpers.getMatchLiveResults(
-      gameId,
-      eventId
-    );
+    const [matchDate, time, venue, homeTeamScore, awayTeamScore] =
+      await helpers.getMatchLiveResults(gameId, eventId);
     await helpers.pickMatch(url);
 
     const teamLocator = page.getByTestId("styled-match-header");
     const dateLocator = page.locator(".ssrcss-1hjuztf-Date");
-    const homeScore = page.locator(".ssrcss-184cm0p-StyledHeadToHead")
-        .getByTestId("score")
-        .locator(".ssrcss-qsbptj-HomeScore")
-        .getByText(`${homeTeamScore}`)
-    const awayScore = page.locator(".ssrcss-184cm0p-StyledHeadToHead")
-        .getByTestId("score")
-        .locator(".ssrcss-fri5a2-AwayScore")
-        .getByText(`${awayTeamScore}`)
-   
-
+    const homeScore = page
+      .locator(".ssrcss-184cm0p-StyledHeadToHead")
+      .getByTestId("score")
+      .locator(".ssrcss-qsbptj-HomeScore")
+      .getByText(`${homeTeamScore}`);
+    const awayScore = page
+      .locator(".ssrcss-184cm0p-StyledHeadToHead")
+      .getByTestId("score")
+      .locator(".ssrcss-fri5a2-AwayScore")
+      .getByText(`${awayTeamScore}`);
 
     await expect(teamLocator).toContainText(`${homeTeam}`);
 
@@ -76,10 +67,8 @@ test.describe("when user selects a completed fixture and selects a team", () => 
 
     await expect(dateLocator).toContainText(`${matchDate}`);
 
-
     await expect(homeScore).toContainText(`${homeTeamScore}`);
 
     await expect(awayScore).toContainText(`${awayTeamScore}`);
-
   });
 });
