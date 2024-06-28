@@ -46,7 +46,7 @@ test.describe("when user selects a completed fixture and selects a team", () => 
     await helpers.goto();
   });
 
-  test("should display correct team names, date, time and venue on live results page", async ({
+  test("should display correct score, team names, date, time and venue on live results page", async ({
     page,
   }) => {
     const [homeTeam, awayTeam, url, gameId, eventId] =
