@@ -42,7 +42,6 @@ export class Helpers {
       .getByTestId(`datepicker-date-link-${date}`)
       .click();
   }
-
   
 
   async getMatchResultsForFutureMatch() {
@@ -72,7 +71,19 @@ export class Helpers {
     const gameId = retrievedResults.tipoTopicId
     const eventId = retrievedResults.id
     return [homeTeam, awayTeam, url, gameId, eventId]
+  }
 
+  async getMatchResultsForCurrentDay() {
+    const results = new Results();
+    const todaysDate = await this.getCurrentDate();
+    await this.pickDate(todaysDate);
+    const retrievedResults = await results.getResults(todaysDate, todaysDate);
+    const homeTeam = retrievedResults.home.fullName;
+    const awayTeam = retrievedResults.away.fullName;
+    const url = retrievedResults.onwardJourneyLink;
+    const gameId = retrievedResults.tipoTopicId
+    const eventId = retrievedResults.id
+    return [homeTeam, awayTeam, url, gameId, eventId]
   }
 
   async getMatchLiveResults(gameId, eventId) {
