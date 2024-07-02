@@ -15,13 +15,9 @@ test.describe("when user selects dates using the date picker", () => {
       await helpers.getMatchLiveResults(gameId, eventId);
     const teamLocator = page.getByTestId("fixtures-page-wrapper");
     const homeScore = page
-      .getByTestId("score")
-      .locator(".ssrcss-qsbptj-HomeScore")
-      .getByText(`${homeTeamScore}`);
+      .getByRole('link', { name: `${homeTeam} ${homeTeamScore} , ${awayTeam} ${awayTeamScore} at` })
     const awayScore = page
-      .getByTestId("score")
-      .locator(".ssrcss-fri5a2-AwayScore")
-      .getByText(`${awayTeamScore}`);
+      .getByRole('link', { name: `${homeTeam} ${homeTeamScore} , ${awayTeam} ${awayTeamScore} at` })
 
     await expect(page).toHaveURL(
       `https://www.bbc.co.uk/sport/football/scores-fixtures/${todaysDate}`
@@ -38,15 +34,21 @@ test.describe("when user selects dates using the date picker", () => {
     const previousDate = await helpers.getPreviousDate();
     await helpers.pickDate(previousDate);
 
-    const [homeTeam, awayTeam] =
+    const [homeTeam, awayTeam, , gameId, eventId] =
       await helpers.getMatchResultsForCompletedMatch();
+    const [matchDate, time, venue, homeTeamScore, awayTeamScore] =
+      await helpers.getMatchLiveResults(gameId, eventId);
     const teamLocator = page.getByTestId("fixtures-page-wrapper");
+    const homeScore = page.getByRole('link', { name: `${homeTeam} ${homeTeamScore} , ${awayTeam} ${awayTeamScore} at Full` })
+    const awayScore = page.getByRole('link', { name: `${homeTeam} ${homeTeamScore} , ${awayTeam} ${awayTeamScore} at Full` })
 
     await expect(page).toHaveURL(
       `https://www.bbc.co.uk/sport/football/scores-fixtures/${previousDate}`
     );
     await expect(teamLocator).toContainText(`${homeTeam}`);
     await expect(teamLocator).toContainText(`${awayTeam}`);
+    await expect(homeScore).toContainText(`${homeTeamScore}`);
+    await expect(awayScore).toContainText(`${awayTeamScore}`);
   });
 
   test("should display fixtures and results when next day is selected", async ({
