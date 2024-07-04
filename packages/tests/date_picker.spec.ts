@@ -9,10 +9,8 @@ test.describe("when user selects dates using the date picker", () => {
 
     await helpers.pickDate(todaysDate);
 
-    const [homeTeam, awayTeam, , gameId, eventId] =
+    const [homeTeam, awayTeam] =
       await helpers.getMatchResultsForCurrentDay();
-    const [matchDate, time, venue, homeTeamScore, awayTeamScore] =
-      await helpers.getMatchLiveResults(gameId, eventId);
     const teamLocator = page.locator("#main-data");
 
     await expect(page).toHaveURL(
@@ -33,7 +31,7 @@ test.describe("when user selects dates using the date picker", () => {
       await helpers.getMatchResultsForCompletedMatch();
     const [matchDate, time, venue, homeTeamScore, awayTeamScore] =
       await helpers.getMatchLiveResults(gameId, eventId);
-    const teamLocator = page.getByTestId("fixtures-page-wrapper");
+    const teamLocator = page.locator("#main-data");
     const homeScore = page.getByRole("link", {
       name: `${homeTeam} ${homeTeamScore} , ${awayTeam} ${awayTeamScore} at Full`,
     });
